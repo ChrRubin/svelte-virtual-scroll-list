@@ -1,5 +1,33 @@
 # svelte-virtual-scroll-list
 
+This is a fork of [v1ack](https://github.com/v1ack)'s [svelte-virtual-scroll-list](https://github.com/v1ack/svelte-virtual-scroll-list) migrated to TypeScript to add support for TypeScript generics.
+
+## Usage
+
+`yarn add -D @chrrubin/svelte-virtual-scroll-list`
+
+```svelte
+<script lang="ts">
+    import VirtualScroll from "@chrrubin/svelte-virtual-scroll-list"
+
+    interface Item {
+        id: number;
+        text: string;
+    }
+
+    let items: Item[] = [{ id: 0, text: 'zero'}, { id: 1, text: 'one'}];
+</script>
+
+<VirtualScroll data={items} key="id" let:data>
+  <div>{data.id}</div>
+  <div>{data.text}<div>
+</VirtualScroll>
+```
+
+---
+
+## Original README
+
 [![npm](https://img.shields.io/npm/v/svelte-virtual-scroll-list?style=for-the-badge)](https://npmjs.com/package/svelte-virtual-scroll-list/)
 
 Svelte implementation of vue library [vue-virtual-scroll-list](https://github.com/tangbc/vue-virtual-scroll-list)
