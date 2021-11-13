@@ -34,7 +34,7 @@
         }
     })
 
-    function dispatchSizeChange() {
+    function dispatchSizeChange(): void {
         const size = itemDiv ? itemDiv[shapeKey] : 0
         if (size === previousSize) return
         previousSize = size

@@ -115,7 +115,7 @@
         }
     }
 
-    export function updatePageModeFront() {
+    export function updatePageModeFront(): void {
         if (root) {
             const rect = root.getBoundingClientRect()
             const {defaultView} = root.ownerDocument
@@ -125,7 +125,7 @@
         }
     }
 
-    export function scrollToOffset(offset: number) {
+    export function scrollToOffset(offset: number): void {
         if (pageMode) {
             document.body[directionKey] = offset
             document.documentElement[directionKey] = offset
@@ -134,7 +134,7 @@
         }
     }
 
-    export function scrollToIndex(index: number) {
+    export function scrollToIndex(index: number): void {
         if (index >= data.length - 1) {
             scrollToBottom()
         } else {
@@ -143,7 +143,7 @@
         }
     }
 
-    export function scrollToBottom() {
+    export function scrollToBottom(): void {
         if (shepherd) {
             const offset = shepherd[isHorizontal ? "offsetLeft" : "offsetTop"]
             scrollToOffset(offset)
@@ -182,11 +182,11 @@
         }
     })
 
-    function getUniqueIdFromDataSources() {
+    function getUniqueIdFromDataSources(): any[] {
         return data.map((dataSource) => dataSource[key])
     }
 
-    function onItemResized(event: CustomEvent<{id: string, size: number, type: string}>) {
+    function onItemResized(event: CustomEvent<{id: string, size: number, type: string}>): void {
         const {id, size, type} = event.detail
         if (type === "item")
             virtual.saveSize(id, size)
@@ -200,13 +200,13 @@
         }
     }
 
-    function onRangeChanged(range_: Range) {
+    function onRangeChanged(range_: Range): void {
         range = range_
         paddingStyle = paddingStyle = isHorizontal ? `0px ${range.padBehind}px 0px ${range.padFront}px` : `${range.padFront}px 0px ${range.padBehind}px`
         displayItems = data.slice(range.start, range.end + 1)
     }
 
-    function onScroll(event: Event) {
+    function onScroll(event: Event): void {
         const offset = getOffset()
         const clientSize = getClientSize()
         const scrollSize = getScrollSize()
@@ -220,7 +220,7 @@
         emitEvent(offset, clientSize, scrollSize, event)
     }
 
-    function emitEvent(offset: number, clientSize: number, scrollSize: number, event: Event) {
+    function emitEvent(offset: number, clientSize: number, scrollSize: number, event: Event): void {
         dispatch("scroll", {event, range: virtual.range})
 
         if (virtual.isFront() && !!data.length && (offset - topThreshold <= 0)) {
@@ -234,14 +234,14 @@
     $: scrollToIndex(start)
     $: handleKeepsChange(keeps)
 
-    function handleKeepsChange(keeps: number) {
+    function handleKeepsChange(keeps: number): void {
         virtual.updateParam("keeps", keeps)
         virtual.handleSlotSizeChange()
     }
 
     $: handleDataSourcesChange(data)
 
-    async function handleDataSourcesChange(data: T[]) {
+    async function handleDataSourcesChange(data: T[]): Promise<void> {
         virtual.updateParam("uniqueIds", getUniqueIdFromDataSources())
         virtual.handleDataSourcesChange()
     }
