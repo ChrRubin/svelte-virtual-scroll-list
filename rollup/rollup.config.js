@@ -1,6 +1,7 @@
 import svelte from "rollup-plugin-svelte"
-import sveld from "sveld"
 import pkg from "../package.json"
+import autoPreprocess from 'svelte-preprocess';
+import typescript from '@rollup/plugin-typescript';
 
 export default {
     input: pkg.svelte,
@@ -15,8 +16,9 @@ export default {
             compilerOptions: {
                 // enable run-time checks when not in production
                 dev: false,
+                preprocess: autoPreprocess(),
             },
         }),
-        sveld(),
+        typescript({ sourceMap: false })
     ],
 }
