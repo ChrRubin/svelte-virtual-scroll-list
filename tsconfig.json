@@ -6,6 +6,6 @@
     "strict": true,
     "declaration": true,
     "allowJs": true,
-    "outDir": "dist"
+    "outDir": "lib"
   }
 }

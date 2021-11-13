@@ -2,6 +2,8 @@ import svelte from "rollup-plugin-svelte"
 import resolve from "@rollup/plugin-node-resolve"
 import livereload from "rollup-plugin-livereload"
 import css from "rollup-plugin-css-only"
+import autoPreprocess from 'svelte-preprocess';
+import typescript from '@rollup/plugin-typescript';
 
 const production = !process.env.ROLLUP_WATCH
 
@@ -39,7 +41,9 @@ export default {
             compilerOptions: {
                 dev: !production,
             },
+            preprocess: autoPreprocess(),
         }),
+        typescript({ sourceMap: !production }),
         css({output: "bundle.css"}),
         resolve({
             browser: true,

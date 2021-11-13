@@ -16,9 +16,9 @@ export default {
             compilerOptions: {
                 // enable run-time checks when not in production
                 dev: false,
-                preprocess: autoPreprocess(),
             },
+            preprocess: autoPreprocess(),
         }),
-        typescript({ sourceMap: false })
+        typescript({ sourceMap: true })
     ],
 }

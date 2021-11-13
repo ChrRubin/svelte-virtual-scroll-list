@@ -46,7 +46,6 @@
   "peerDependencies": {
     "svelte": "^3.0.0"
   },
-  "svelte": "./src/index.js",
-  "module": "./lib/index.mjs",
-  "types": "./types/index.d.ts"
+  "svelte": "./src/index.ts",
+  "module": "./lib/index.mjs"
 }

@@ -1,31 +1,29 @@
-<script>
-    import Virtual from "./virtual"
+<script lang="ts">
+    import {Virtual} from "./virtual"
+    import type {Range} from "./virtual"
     import Item from "./Item.svelte"
     import {createEventDispatcher, onDestroy, onMount} from "svelte"
 
+    type T = $$Generic<Record<string, any>>
+
     /**
      * Unique key for getting data from `data`
-     * @type {string}
      */
     export let key = "id"
     /**
      * Source for list
-     * @type {Array<any>}
      */
-    export let data
+    export let data: T[]
     /**
      * Count of rendered items
-     * @type {number}
      */
     export let keeps = 30
     /**
      * Estimate size of each item, needs for smooth scrollbar
-     * @type {number}
      */
     export let estimateSize = 50
     /**
      * Scroll direction
-     * @type {boolean}
      */
     export let isHorizontal = false
     /**
@@ -38,23 +36,20 @@
     export let offset = 0
     /**
      * Let virtual list using global document to scroll through the list
-     * @type {boolean}
      */
     export let pageMode = false
     /**
      * The threshold to emit `top` event, attention to multiple calls.
-     * @type {number}
      */
     export let topThreshold = 0
     /**
      * The threshold to emit `bottom` event, attention to multiple calls.
-     * @type {number}
      */
     export let bottomThreshold = 0
 
-    let displayItems = []
-    let paddingStyle
-    let directionKey = isHorizontal ? "scrollLeft" : "scrollTop"
+    let displayItems: T[] = []
+    let paddingStyle: string
+    let directionKey: "scrollLeft" | "scrollTop" = isHorizontal ? "scrollLeft" : "scrollTop"
     let range = null
     let virtual = new Virtual({
         slotHeaderSize: 0,
@@ -64,31 +59,22 @@
         buffer: Math.round(keeps / 3), // recommend for a third of keeps
         uniqueIds: getUniqueIdFromDataSources(),
     }, onRangeChanged)
-    let root
-    let shepherd
+    let root: HTMLDivElement
+    let shepherd: HTMLDivElement
     const dispatch = createEventDispatcher()
 
-    /**
-     * @param id {number}
-     * @returns {number}
-     */
-    export function getSize(id) {
+    export function getSize(id: number): number {
         return virtual.sizes.get(id)
     }
 
     /**
      * Count of items
-     * @returns {number}
      */
-    export function getSizes() {
+    export function getSizes(): number {
         return virtual.sizes.size
     }
 
-    /**
-     *
-     * @returns {number}
-     */
-    export function getOffset() {
+    export function getOffset(): number {
         if (pageMode) {
             return document.documentElement[directionKey] || document.body[directionKey]
         } else {
@@ -96,11 +82,7 @@
         }
     }
 
-    /**
-     *
-     * @returns {number}
-     */
-    export function getClientSize() {
+    export function getClientSize(): number {
         const key = isHorizontal ? "clientWidth" : "clientHeight"
         if (pageMode) {
             return document.documentElement[key] || document.body[key]
@@ -109,11 +91,7 @@
         }
     }
 
-    /**
-     *
-     * @returns {number}
-     */
-    export function getScrollSize() {
+    export function getScrollSize(): number {
         const key = isHorizontal ? "scrollWidth" : "scrollHeight"
         if (pageMode) {
             return document.documentElement[key] || document.body[key]
@@ -126,16 +104,13 @@
         if (root) {
             const rect = root.getBoundingClientRect()
             const {defaultView} = root.ownerDocument
+            if (!defaultView) return
             const offsetFront = isHorizontal ? (rect.left + defaultView.pageXOffset) : (rect.top + defaultView.pageYOffset)
             virtual.updateParam("slotHeaderSize", offsetFront)
         }
     }
 
-    /**
-     *
-     * @param offset {number}
-     */
-    export function scrollToOffset(offset) {
+    export function scrollToOffset(offset: number) {
         if (pageMode) {
             document.body[directionKey] = offset
             document.documentElement[directionKey] = offset
@@ -144,11 +119,7 @@
         }
     }
 
-    /**
-     *
-     * @param index {number}
-     */
-    export function scrollToIndex(index) {
+    export function scrollToIndex(index: number) {
         if (index >= data.length - 1) {
             scrollToBottom()
         } else {
@@ -190,7 +161,7 @@
     })
 
     onDestroy(() => {
-        virtual.destroy()
+        // virtual.destroy()
         if (pageMode) {
             document.removeEventListener("scroll", onScroll)
         }
@@ -200,7 +171,7 @@
         return data.map((dataSource) => dataSource[key])
     }
 
-    function onItemResized(event) {
+    function onItemResized(event: CustomEvent<{id: string, size: number, type: string}>) {
         const {id, size, type} = event.detail
         if (type === "item")
             virtual.saveSize(id, size)
@@ -214,13 +185,13 @@
         }
     }
 
-    function onRangeChanged(range_) {
+    function onRangeChanged(range_: Range) {
         range = range_
         paddingStyle = paddingStyle = isHorizontal ? `0px ${range.padBehind}px 0px ${range.padFront}px` : `${range.padFront}px 0px ${range.padBehind}px`
         displayItems = data.slice(range.start, range.end + 1)
     }
 
-    function onScroll(event) {
+    function onScroll(event: Event) {
         const offset = getOffset()
         const clientSize = getClientSize()
         const scrollSize = getScrollSize()
@@ -234,8 +205,8 @@
         emitEvent(offset, clientSize, scrollSize, event)
     }
 
-    function emitEvent(offset, clientSize, scrollSize, event) {
-        dispatch("scroll", {event, range: virtual.getRange()})
+    function emitEvent(offset: number, clientSize: number, scrollSize: number, event: Event) {
+        dispatch("scroll", {event, range: virtual.range})
 
         if (virtual.isFront() && !!data.length && (offset - topThreshold <= 0)) {
             dispatch("top")
@@ -248,14 +219,14 @@
     $: scrollToIndex(start)
     $: handleKeepsChange(keeps)
 
-    function handleKeepsChange(keeps) {
+    function handleKeepsChange(keeps: number) {
         virtual.updateParam("keeps", keeps)
         virtual.handleSlotSizeChange()
     }
 
     $: handleDataSourcesChange(data)
 
-    async function handleDataSourcesChange(data) {
+    async function handleDataSourcesChange(data: T[]) {
         virtual.updateParam("uniqueIds", getUniqueIdFromDataSources())
         virtual.handleDataSourcesChange()
     }

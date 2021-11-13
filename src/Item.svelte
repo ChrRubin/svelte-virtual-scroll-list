@@ -12,6 +12,14 @@
     const dispatch = createEventDispatcher()
     const shapeKey = horizontal ? "offsetWidth" : "offsetHeight"
 
+    interface $$Events {
+        resize: CustomEvent<{
+            id: string
+            size: number
+            type: string
+        }>
+    }
+
     onMount(() => {
         if (typeof ResizeObserver !== "undefined") {
             resizeObserver = new ResizeObserver(dispatchSizeChange)
