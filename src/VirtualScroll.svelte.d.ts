@@ -1,5 +1,11 @@
 import { SvelteComponentTyped } from "svelte";
-import type { Range } from "./virtual"
+
+interface Range {
+  start: number
+  end: number
+  padFront: number
+  padBehind: number
+}
 
 export interface VirtualScrollProps<T> {
   /** Unique key for getting data from `data` */
