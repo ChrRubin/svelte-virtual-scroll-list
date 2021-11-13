@@ -6,6 +6,21 @@
 
     type T = $$Generic<Record<string, any>>
 
+    interface $$Events {
+        scroll: CustomEvent<{
+            event: Event
+            range: Range
+        }>
+        top: CustomEvent<undefined>
+        bottom: CustomEvent<undefined>
+    }
+
+    interface $$Slots {
+        default: {
+            data: T
+        }
+    }
+
     /**
      * Unique key for getting data from `data`
      */
