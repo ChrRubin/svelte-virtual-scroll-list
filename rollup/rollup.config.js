@@ -2,7 +2,6 @@ import svelte from "rollup-plugin-svelte"
 import pkg from "../package.json"
 import autoPreprocess from 'svelte-preprocess';
 import typescript from '@rollup/plugin-typescript';
-import svelteDts from 'svelte-dts';
 
 export default {
     input: pkg.svelte,
@@ -13,9 +12,6 @@ export default {
         file: pkg.module,
     },
     plugins: [
-        svelteDts({
-            output: pkg.types,
-        }),
         svelte({
             compilerOptions: {
                 // enable run-time checks when not in production
